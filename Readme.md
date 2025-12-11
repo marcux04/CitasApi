@@ -112,10 +112,12 @@ cd CitasApi
 
 Ejecuta el siguiente script:
 
-CREATE DATABASE IF NOT EXISTS CitasMedicas;
+-- Crear base de datos nueva
+CREATE DATABASE CitasMedicas;
 USE CitasMedicas;
 
-CREATE TABLE IF NOT EXISTS catPacientes (
+-- Crear tabla catPacientes
+CREATE TABLE catPacientes (
     id INT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL,
     curp VARCHAR(18) NOT NULL UNIQUE,
@@ -125,14 +127,16 @@ CREATE TABLE IF NOT EXISTS catPacientes (
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS catMedicos (
+-- Crear tabla catMedicos
+CREATE TABLE catMedicos (
     id INT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL,
     especialidad VARCHAR(50) NOT NULL,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS citas (
+-- Crear tabla citas
+CREATE TABLE citas (
     id INT NOT NULL AUTO_INCREMENT,
     paciente_id INT NOT NULL,
     medico_id INT NOT NULL,
@@ -140,18 +144,29 @@ CREATE TABLE IF NOT EXISTS citas (
     hora TIME NOT NULL,
     estado VARCHAR(20) DEFAULT 'pendiente',
     PRIMARY KEY (id),
-    FOREIGN KEY (paciente_id) REFERENCES catPacientes(id)
-        ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (medico_id) REFERENCES catMedicos(id)
-        ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT fk_citas_paciente
+        FOREIGN KEY (paciente_id) 
+        REFERENCES catPacientes(id)
+        ON DELETE RESTRICT 
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_citas_medico
+        FOREIGN KEY (medico_id) 
+        REFERENCES catMedicos(id)
+        ON DELETE RESTRICT 
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Insertar médicos de prueba
 INSERT INTO catMedicos (nombre, especialidad) VALUES
 ('Dr. Roberto Sánchez', 'Cardiología'),
 ('Dra. Ana Martínez', 'Pediatría'),
 ('Dr. Luis Fernández', 'Dermatología'),
 ('Dra. Sofía Ramírez', 'Ginecología'),
 ('Dr. Jorge Torres', 'Ortopedia');
+
+-- Insertar paciente con contraseña hasheada (Password: MariaSecure01)
+INSERT INTO catPacientes (nombre, curp, telefono, correo, password) VALUES
+('María López', 'LOPM900505MDFRPR02', '5511223344', 'maria.lopez@example.com', '$2a$11$nV8w6K5Y4t3z2q1w0e9rD.ABCDEFGHIJKLMNOPQRSTUVWXYZ01234');
 
 3. Configurar la cadena de conexión
 
