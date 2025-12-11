@@ -44,7 +44,7 @@ namespace CitasApi.Controllers
                 if (paciente == null)
                     return Unauthorized(ApiResponse<object>.ErrorResponse("Credenciales inválidas"));
 
-                var token = _jwtHelper.GenerateToken(paciente.Correo, paciente.Id);
+                var token = _jwtHelper.GenerateToken(paciente.Correo, paciente.Id, paciente.Rol);
 
                 return Ok(ApiResponse<object>.SuccessResponse(new
                 {
@@ -54,7 +54,8 @@ namespace CitasApi.Controllers
                         paciente.Id,
                         paciente.Nombre,
                         paciente.Correo,
-                        paciente.Telefono
+                        paciente.Telefono,
+                        paciente.Rol
                     }
                 }, "Inicio de sesión exitoso"));
             }

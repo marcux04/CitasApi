@@ -21,7 +21,7 @@ builder.Services.AddSwaggerGen(options =>
     { 
         Title = "Citas Médicas API", 
         Version = "v1",
-        Description = "API REST para gestión de citas médicas",
+        Description = "API REST completa para gestión de citas médicas",
         Contact = new OpenApiContact
         {
             Name = "Equipo de Desarrollo",
@@ -32,7 +32,7 @@ builder.Services.AddSwaggerGen(options =>
     // Add JWT Authentication to Swagger
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Description = "JWT Authorization header usando Bearer scheme. Ejemplo: \"Authorization: Bearer {token}\"",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
@@ -127,7 +127,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
-app.UseAuthentication();
+app.UseAuthentication(); // Asegúrate de que esto esté antes de UseAuthorization
 app.UseAuthorization();
 app.MapControllers();
 

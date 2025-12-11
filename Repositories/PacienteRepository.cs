@@ -1,4 +1,5 @@
 using CitasApi.Data;
+using CitasApi.DTOs;
 using CitasApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,22 @@ namespace CitasApi.Repositories
         public async Task<IEnumerable<Paciente>> GetAllAsync()
         {
             return await _context.Pacientes.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Paciente>> GetPacientesFiltradosAsync(FiltroPacientesDto filtro)
+        {
+            var query = _context.Pacientes.AsQueryable();
+
+            if (!string.IsNullOrEmpty(filtro.Nombre))
+                query = query.Where(p => p.Nombre.Contains(filtro.Nombre));
+
+            if (!string.IsNullOrEmpty(filtro.Curp))
+                query = query.Where(p => p.Curp.Contains(filtro.Curp));
+
+            if (!string.IsNullOrEmpty(filtro.Correo))
+                query = query.Where(p => p.Correo.Contains(filtro.Correo));
+
+            return await query.ToListAsync();
         }
 
         public async Task<Paciente?> GetByIdAsync(int id)

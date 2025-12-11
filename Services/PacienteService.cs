@@ -13,6 +13,16 @@ namespace CitasApi.Services
             _repository = repository;
         }
 
+        public async Task<IEnumerable<Paciente>> GetAllPacientesAsync()
+        {
+            return await _repository.GetAllAsync();
+        }
+
+        public async Task<IEnumerable<Paciente>> GetPacientesFiltradosAsync(FiltroPacientesDto filtro)
+        {
+            return await _repository.GetPacientesFiltradosAsync(filtro);
+        }
+
         public async Task<Paciente> CreatePacienteAsync(PacienteCreateDto pacienteDto)
         {
             // Verificar CURP única
@@ -29,7 +39,8 @@ namespace CitasApi.Services
                 Curp = pacienteDto.Curp,
                 Telefono = pacienteDto.Telefono,
                 Correo = pacienteDto.Correo,
-                Password = BCrypt.Net.BCrypt.HashPassword(pacienteDto.Password)
+                Password = BCrypt.Net.BCrypt.HashPassword(pacienteDto.Password),
+                Rol = "Paciente" // Rol por defecto
             };
 
             return await _repository.CreateAsync(paciente);
@@ -83,24 +94,16 @@ namespace CitasApi.Services
             if (paciente == null)
                 return null;
 
-            // SOLUCIÓN AL PROBLEMA DEL LOGIN:
-            // 1. Primero intentar verificar con BCrypt (si la contraseña fue hasheada)
-            // 2. Si falla, verificar si la contraseña está en texto plano (para desarrollo/migración)
-            // 3. Si coincide en texto plano, actualizar a hash BCrypt
-            
             bool passwordValid = false;
             
-            // Intentar verificar con BCrypt
             try
             {
                 passwordValid = BCrypt.Net.BCrypt.Verify(password, paciente.Password);
             }
             catch (Exception)
             {
-                // Si BCrypt falla, podría ser porque la contraseña está en texto plano
                 passwordValid = (paciente.Password == password);
                 
-                // Si la contraseña coincide en texto plano, actualizar a hash
                 if (passwordValid)
                 {
                     paciente.Password = BCrypt.Net.BCrypt.HashPassword(password);
@@ -109,6 +112,21 @@ namespace CitasApi.Services
             }
 
             return passwordValid ? paciente : null;
+        }
+
+        public async Task<Paciente?> CambiarRolAsync(int id, string nuevoRol)
+        {
+            var paciente = await _repository.GetByIdAsync(id);
+            if (paciente == null)
+                return null;
+
+            var rolesPermitidos = new[] { "Paciente", "Admin", "Medico" };
+            if (!rolesPermitidos.Contains(nuevoRol))
+                throw new InvalidOperationException($"Rol no válido. Roles permitidos: {string.Join(", ", rolesPermitidos)}");
+
+            paciente.Rol = nuevoRol;
+            await _repository.UpdateAsync(paciente);
+            return paciente;
         }
     }
 }

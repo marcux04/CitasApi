@@ -14,7 +14,7 @@ namespace CitasApi.Helpers
             _configuration = configuration;
         }
 
-        public string GenerateToken(string email, int userId)
+        public string GenerateToken(string email, int userId, string rol)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
@@ -24,7 +24,8 @@ namespace CitasApi.Helpers
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.Email, email),
-                    new Claim(ClaimTypes.NameIdentifier, userId.ToString())
+                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                    new Claim(ClaimTypes.Role, rol)
                 }),
                 Expires = DateTime.UtcNow.AddHours(8),
                 SigningCredentials = new SigningCredentials(

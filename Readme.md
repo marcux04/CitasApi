@@ -167,6 +167,15 @@ INSERT INTO catMedicos (nombre, especialidad) VALUES
 -- Insertar paciente con contraseña hasheada (Password: MariaSecure01)
 INSERT INTO catPacientes (nombre, curp, telefono, correo, password) VALUES
 ('María López', 'LOPM900505MDFRPR02', '5511223344', 'maria.lopez@example.com', '$2a$11$nV8w6K5Y4t3z2q1w0e9rD.ABCDEFGHIJKLMNOPQRSTUVWXYZ01234');
+LUEGO EJECUTAR ESTO 
+-- Agregar columna rol a la tabla catPacientes
+ALTER TABLE catPacientes 
+ADD COLUMN rol VARCHAR(20) DEFAULT 'Paciente';
+
+-- Crear un usuario administrador por defecto
+INSERT INTO catPacientes (nombre, curp, telefono, correo, password, rol) 
+VALUES 
+('Administrador', 'ADMN000000HDFAAA00', '5512345678', 'admin@citasmedicas.com', '$2a$11$mU9v7J5Y4t3z2q1w0e9rD.ABCDEFGHIJKLMNOPQRSTUVWXYZ01234', 'Admin');
 
 3. Configurar la cadena de conexión
 

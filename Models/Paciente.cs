@@ -36,6 +36,10 @@ namespace CitasApi.Models
         [MaxLength(255)]
         public string Password { get; set; } = null!;
 
+        [Column("rol")]
+        [MaxLength(20)]
+        public string Rol { get; set; } = "Paciente";
+
         // Relaciones
         public virtual ICollection<Cita> Citas { get; set; } = new List<Cita>();
     }

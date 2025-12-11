@@ -1,3 +1,4 @@
+using CitasApi.DTOs;
 using CitasApi.Models;
 
 namespace CitasApi.Repositories
@@ -5,6 +6,7 @@ namespace CitasApi.Repositories
     public interface IPacienteRepository
     {
         Task<IEnumerable<Paciente>> GetAllAsync();
+        Task<IEnumerable<Paciente>> GetPacientesFiltradosAsync(FiltroPacientesDto filtro);
         Task<Paciente?> GetByIdAsync(int id);
         Task<Paciente?> GetByEmailAsync(string email);
         Task<Paciente> CreateAsync(Paciente paciente);
