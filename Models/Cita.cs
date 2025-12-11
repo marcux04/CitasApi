@@ -8,28 +8,34 @@ namespace CitasApi.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("id")]
         public int Id { get; set; }
 
         [Required]
-        [ForeignKey("Paciente")]
+        [Column("paciente_id")]
         public int PacienteId { get; set; }
 
         [Required]
-        [ForeignKey("Medico")]
+        [Column("medico_id")]
         public int MedicoId { get; set; }
 
         [Required]
-        [Column(TypeName = "date")]
+        [Column("fecha", TypeName = "date")]
         public DateTime Fecha { get; set; }
 
         [Required]
-        [Column(TypeName = "time")]
+        [Column("hora")]
         public TimeSpan Hora { get; set; }
 
+        [Column("estado")]
         [MaxLength(20)]
         public string Estado { get; set; } = "pendiente";
 
-        public virtual Paciente Paciente { get; set; } = null!;
-        public virtual Medico Medico { get; set; } = null!;
+        // Propiedades de navegación
+        [ForeignKey("PacienteId")]
+        public virtual Paciente? Paciente { get; set; }
+
+        [ForeignKey("MedicoId")]
+        public virtual Medico? Medico { get; set; }
     }
 }

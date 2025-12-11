@@ -83,10 +83,32 @@ namespace CitasApi.Services
             if (paciente == null)
                 return null;
 
-            if (!BCrypt.Net.BCrypt.Verify(password, paciente.Password))
-                return null;
+            // SOLUCIÓN AL PROBLEMA DEL LOGIN:
+            // 1. Primero intentar verificar con BCrypt (si la contraseña fue hasheada)
+            // 2. Si falla, verificar si la contraseña está en texto plano (para desarrollo/migración)
+            // 3. Si coincide en texto plano, actualizar a hash BCrypt
+            
+            bool passwordValid = false;
+            
+            // Intentar verificar con BCrypt
+            try
+            {
+                passwordValid = BCrypt.Net.BCrypt.Verify(password, paciente.Password);
+            }
+            catch (Exception)
+            {
+                // Si BCrypt falla, podría ser porque la contraseña está en texto plano
+                passwordValid = (paciente.Password == password);
+                
+                // Si la contraseña coincide en texto plano, actualizar a hash
+                if (passwordValid)
+                {
+                    paciente.Password = BCrypt.Net.BCrypt.HashPassword(password);
+                    await _repository.UpdateAsync(paciente);
+                }
+            }
 
-            return paciente;
+            return passwordValid ? paciente : null;
         }
     }
 }
